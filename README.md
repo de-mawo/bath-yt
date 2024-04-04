@@ -8,7 +8,6 @@
 
 <img src="/bathgraph.png" alt="graph img">
 
-- A learning Management System: ALX intranet clone
 
 <a href="https://github.com/de-mawo/bath-backend">Nodejs Standalone Backend </a>  - Work In Progress
 
