@@ -179,11 +179,11 @@ const AddTasks = () => {
               name="question"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Question</FormLabel>
+                  <FormLabel>Task</FormLabel>
                   <FormControl>
-                    <Input placeholder="Question" {...field} />
+                    <Input placeholder="Task" {...field} />
                   </FormControl>
-                  <FormDescription>Add a Question</FormDescription>
+                  <FormDescription>Add a Task</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -194,7 +194,7 @@ const AddTasks = () => {
               name="markingScheme"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Question for Review</FormLabel>
+                  <FormLabel> Review Question </FormLabel>
                   <FormControl>
                     <Input placeholder="Review Question" {...field} />
                   </FormControl>
@@ -211,15 +211,14 @@ const AddTasks = () => {
               name="number"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Question Number</FormLabel>
+                  <FormLabel>Task Number</FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="Question Number"
                       type="number"
                       {...field}
                     />
                   </FormControl>
-                  <FormDescription>Add a Question Number</FormDescription>
+                  <FormDescription>Add a Task Number</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
