@@ -1,0 +1,240 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["relationJoins"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+enum Role {
+  USER
+  ADMIN
+  MODERATOR
+}
+
+enum EmploymentStatus {
+  EMPLOYED
+  SEARCHING
+}
+
+enum StudentProgress {
+  INPROGRESS
+  SUSPENDED
+  COMPLETED
+}
+
+model User {
+  id            String           @id @default(uuid())
+  name          String?
+  email         String?          @unique
+  emailVerified DateTime?
+  image         String?
+  role          Role             @default(USER)
+  phone         String?
+  github        String?
+  linkedIn      String?
+  discord       String?
+  employment    EmploymentStatus @default(SEARCHING)
+  accounts      Account[]
+  sessions      Session[]
+  cohort        String           @default("c0")
+  course        String           @default("demox001") // Scale up to include many courses
+  progress      StudentProgress  @default(INPROGRESS)
+  modules       ModuleMarks[]
+  projects      ProjectMarks[]
+  courseMarks   CourseMarks[]
+}
+
+model Course {
+  id            String   @id @default(uuid())
+  title         String
+  category      String
+  code          String   @unique
+  slug          String
+  possibleMarks Float    @default(100)
+  tags          String[]
+  modules       Module[]
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  students      String[]
+}
+
+model Module {
+  id            String    @id @default(uuid())
+  title         String
+  category      String
+  code          String    @unique
+  slug          String
+  possibleMarks Float     @default(100)
+  tags          String[]
+  courseCode    String    @default("demo")
+  courseId      String
+  course        Course    @relation(fields: [courseId], references: [id])
+  projects      Project[]
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model Project {
+  id            String   @id @default(uuid())
+  title         String
+  category      String
+  code          String   @unique
+  slug          String
+  tags          String[]
+  description   String
+  requirements  String[]
+  resources     String[]
+  objectives    String[]
+  courseCode    String   @default("demo")
+  moduleId      String
+  possibleMarks Float    @default(100)
+  module        Module   @relation(fields: [moduleId], references: [id])
+  tasks         Task[]
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Task {
+  id            String   @id @default(uuid())
+  title         String
+  question      String
+  markingScheme String   @default("Did the answer fulfilled the requirement?")
+  number        Int
+  requirements  String[]
+  demo          String?
+  progLang      String? // for highlighting Syntaxt
+  possiblePoint Float    @default(0)
+  projectId     String
+  project       Project  @relation(fields: [projectId], references: [id])
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model CourseMarks {
+  id                String  @id @default(uuid())
+  modules           Json[] // module id, module code, possible marks , actual marks, score, isMarked
+  averagePercentage Float
+  courseTitle       String
+  courseId          String
+  isCompleted       Boolean @default(false)
+  userId            String
+  user              User    @relation(fields: [userId], references: [id])
+}
+
+model ModuleMarks {
+  id           String  @id @default(uuid())
+  projects     Json[] // project id, project code, possible marks , actual marks, score, isMarked
+  averageMarks Float
+  moduleTitle  String
+  moduleId     String
+  isCompleted  Boolean @default(false)
+  userId       String
+  user         User    @relation(fields: [userId], references: [id])
+}
+
+model ProjectMarks {
+  id            String   @id @default(uuid())
+  tasks         Json[] // tasks id, task number, possible point , actual point, score, isMarked
+  averagePoints Float    @default(0)
+  projectTitle  String
+  projectId     String
+  links         String[]
+  isCompleted   Boolean  @default(false)
+  userId        String
+  user          User     @relation(fields: [userId], references: [id])
+}
+
+model Events {
+  id          String    @id @default(cuid())
+  title       String
+  course      String    @default("2023") // For which course
+  cohort      String    @default("c0")
+  url         String?
+  venue       String?
+  time        String?
+  description String?
+  startDate   DateTime
+  endDate     DateTime
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model CurrentProject {
+  id           String   @id @default(cuid())
+  startDate    DateTime
+  endDate      DateTime
+  projectId    String
+  projectTitle String
+  projectCode  String
+  url          String
+  cohort       String
+  course       String
+}
+
+model Video {
+  id          String   @id @default(cuid())
+  title       String
+  course      String   @default("2023")
+  cohort      String   @default("c0")
+  thumbnail   String?
+  url         String
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Curriculum {
+  id          String   @id @default(cuid())
+  title       String
+  url         String?
+  pdf         String?
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model AllowedEmails {
+  id     String   @id @default(cuid())
+  emails String[]
+}
