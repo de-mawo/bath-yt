@@ -11,6 +11,8 @@
 
 <a href="https://github.com/de-mawo/bath-backend">Nodejs Standalone Backend </a>  - Work In Progress
 
+Join my Discord Server if you need assistance: <a href="https://discord.gg/XwWbp9WwjB">Discord Server </a> 
+
 
 ### Technologies Used
 - Nextjs
@@ -37,7 +39,9 @@
 - Run `yarn prisma generate ` to make sure you create the @prisma client
 
 - Open 2 more terminal on 1 run `yarn dev` & the other `yarn prisma studio`
-- On the prisma studio  go to `AllowedEmails` table and add a record there (add a string id `83f1d583-1309-4d49-bebd-66002c713984 `  or any of your choice for the id field & in the emails , add the admin email as a string like --> [admin@bath.io])
+- On the prisma studio or Simply go to your Cloud Hosted Postgresql DB e.g Supabse  go to `AllowedEmails` table and add a record there (add a string id `83f1d583-1309-4d49-bebd-66002c713984 `  or any of your choice for the id field & in the emails , add the admin email as a string like --> [admin@bath.io]).
+
+- Make Sure you insert enironmental variables following the guidelines in the `.env.example` file 
 
 ### Usage 
 
